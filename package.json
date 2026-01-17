@@ -1,5 +1,5 @@
 {
-  "name": "@uxspec/form",
+  "name": "@smatt92/uxspec-form",
   "version": "0.1.0",
   "description": "UX contracts for forms. Validate experience, not just data.",
   "main": "dist/index.js",
