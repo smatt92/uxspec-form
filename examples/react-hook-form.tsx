@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
-import { uxField, useFormUX } from "@uxspec/form"
+import { uxField, useFormUX } from "../src"
+
 
 const emailUX = uxField({
   name: "email",

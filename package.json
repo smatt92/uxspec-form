@@ -1,0 +1,20 @@
+{
+  "name": "@uxspec/form",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-hook-form": "^7.71.1",
+    "typescript": "^5.9.3"
+  }
+}
