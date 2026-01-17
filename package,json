@@ -1,0 +1,24 @@
+{
+  "name": "@uxspec/form",
+  "version": "0.1.0",
+  "description": "UX contracts for forms. Validate experience, not just data.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "forms",
+    "ux",
+    "validation",
+    "design-systems"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=17"
+  }
+}
