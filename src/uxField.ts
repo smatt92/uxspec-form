@@ -6,6 +6,6 @@ export function uxField(config: UXFieldConfig): UXFieldConfig {
     errorTone: "polite",
     successFeedback: "none",
     reserveErrorSpace: false,
-    ...config,
+    ...config
   }
 }

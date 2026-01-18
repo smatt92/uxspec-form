@@ -1,7 +1,6 @@
 export type ValidateOn = "change" | "blur" | "submit"
 export type ErrorTone = "polite" | "assertive"
 export type SuccessFeedback = "none" | "subtle"
-
 export type FormPhase = "idle" | "interacted" | "submitted"
 
 export interface UXFieldConfig {

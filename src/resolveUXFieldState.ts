@@ -5,43 +5,38 @@ export function resolveUXFieldState({
   hasError,
   touched,
   valid,
-  formPhase = "interacted",
+  formPhase = "interacted"
 }: UXFieldInput): UXFieldState {
 
-  const validateOn = config.validateOn ?? "blur"
-
   const allowValidation =
-    validateOn === "change" ||
-    (validateOn === "blur" && touched) ||
-    (validateOn === "submit" && formPhase === "submitted")
+    config.validateOn === "change" ||
+    (config.validateOn === "blur" && touched) ||
+    (config.validateOn === "submit" && formPhase === "submitted")
 
   const showError = hasError && allowValidation
 
   const showSuccess =
     valid &&
     !hasError &&
-    touched &&
-    config.successFeedback === "subtle"
+    config.successFeedback === "subtle" &&
+    formPhase !== "idle"
 
-  const errorClassName =
-    showError
-      ? config.errorTone === "assertive"
-        ? "ux-error-assertive"
-        : "ux-error-polite"
-      : ""
+  const errorClassName = showError
+    ? config.errorTone === "assertive"
+      ? "ux-error-assertive"
+      : "ux-error-polite"
+    : ""
 
   const helperClassName = [
     config.reserveErrorSpace ? "ux-helper-reserved" : "",
     showError ? "ux-helper-error" : "",
-    showSuccess ? "ux-helper-success" : "",
-  ]
-    .filter(Boolean)
-    .join(" ")
+    showSuccess ? "ux-helper-success" : ""
+  ].join(" ").trim()
 
   return {
     showError,
     showSuccess,
     errorClassName,
-    helperClassName,
+    helperClassName
   }
 }

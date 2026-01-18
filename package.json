@@ -3,12 +3,14 @@
   "version": "0.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "license": "MIT",
   "peerDependencies": {
     "react": ">=18",
-    "react-hook-form": ">=7"
+    "react-hook-form": "^7.71.1"
   },
   "scripts": {
     "build": "tsc"
