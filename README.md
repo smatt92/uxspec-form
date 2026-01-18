@@ -1,187 +1,138 @@
-![npm](https://img.shields.io/npm/v/@smatt92/uxspec-form)
-![npm downloads](https://img.shields.io/npm/dm/@smatt92/uxspec-form)
-![license](https://img.shields.io/npm/l/@smatt92/uxspec-form)
-![types](https://img.shields.io/npm/types/@smatt92/uxspec-form)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/@smatt92/uxspec-form)
+# uxspec-form
 
-# @smatt92/uxspec-form
+**UX contracts for forms.**  
+Control *when* feedback appears and *how* it feels — without changing validation rules.
 
-> **UX contracts for forms**  
-> Validate *experience*, not just data.
+Forms don’t fail because of validation.  
+They fail because of **bad feedback timing**.
 
-Most form libraries focus on **what is valid**.  
-This library focuses on **when and how feedback appears**.
-
-`@smatt92/uxspec-form` lets you define **UX rules explicitly**—so error timing, success feedback, and layout behavior stop being guesswork scattered across components.
+`uxspec-form` lets you define **UX behavior explicitly**, instead of relying on implicit form-library defaults.
 
 ---
 
-## Why this exists
+## What problem does this solve?
 
-Forms often fail users not because validation is wrong, but because **feedback is inconsistent**:
+Most form libraries answer:
 
-- Errors appear too early or too late
-- Layout jumps when messages appear
-- Success feedback is missing or noisy
-- Every field behaves slightly differently
+> “Is this value valid?”
 
-These are **UX decisions**, but they’re usually encoded implicitly in UI code.
+UXSpec answers:
 
-This library makes those decisions **explicit, reusable, and predictable**.
+> “When should the user see feedback, and how should it feel?”
 
----
+Examples of real UX problems:
+- Errors appearing while the user is still typing
+- Errors only appearing after submit, with no warning
+- Layout jumping when errors show up
+- Success feedback appearing too early (or never)
 
-## What this library is (and isn’t)
-
-### What it is
-- A **UX rules engine** for form fields
-- Framework-agnostic logic with a React hook
-- Designed to sit **on top of** existing form libraries
-- Small, deterministic, and easy to reason about
-
-### What it is not
-- Not a form state manager
-- Not a validation library
-- Not a UI component library
-- Not a replacement for React Hook Form, Formik, etc.
-
-Think of it as a **UX schema**, not a data schema.
+UXSpec makes these decisions **intentional** and **predictable**.
 
 ---
 
-## Install
+## Core idea (in human terms)
+
+Each field declares:
+- **When** it is allowed to validate
+- **How strong** the error feedback feels
+- **Whether** success feedback should appear
+- **Whether** space should be reserved for messages
+
+The form only provides **facts** (error, touched, submitted).  
+The field decides the UX behavior.
+
+---
+
+## Installation
 
 ```bash
 npm install @smatt92/uxspec-form
+Core concepts
+1. UX Field configuration
+This is framework-agnostic.
 
-Basic usage
-1. Define a UX contract
+ts
+Copy code
 import { uxField } from "@smatt92/uxspec-form"
 
 const emailUX = uxField({
   name: "email",
-  validateOn: "blur",
-  reserveErrorSpace: true,
-  successFeedback: "subtle",
+
+  // When validation is allowed
+  validateOn: "blur",        // "change" | "blur" | "submit"
+
+  // How error feedback feels
+  errorTone: "polite",       // "polite" | "assertive"
+
+  // Whether to show success feedback
+  successFeedback: "subtle", // "none" | "subtle"
+
+  // Prevent layout shift
+  reserveErrorSpace: true
 })
+This does not depend on React, React Hook Form, or any UI library.
 
+2. UX resolution (the engine)
+Given a field config + a few facts, UXSpec deterministically decides what the UI should do.
 
-This describes how the field should behave, not how it validates.
+ts
+Copy code
+import { resolveUXFieldState } from "@smatt92/uxspec-form"
+The engine needs only four facts:
 
-2. Use it in a React form (example with React Hook Form)
-import { useForm } from "react-hook-form"
-import { useFormUX } from "@smatt92/uxspec-form"
+hasError – is the field invalid?
 
-function EmailField() {
-  const {
-    register,
-    formState: { errors, touchedFields },
-  } = useForm<{ email: string }>()
+touched – has the user interacted?
 
-  const ux = useFormUX({
-    config: emailUX,
-    error: errors.email?.message,
-    touched: touchedFields.email,
-    valid: !errors.email,
-  })
+valid – is the value valid?
 
-  return (
-    <div>
-      <input {...register("email")} />
+formPhase – "interacted" or "submitted"
 
-      <div className={ux.helperClassName}>
-        {ux.showError && <span>Invalid email</span>}
-        {ux.showSuccess && <span>Looks good</span>}
-      </div>
-    </div>
-  )
-}
+It returns:
 
-
-The hook returns pure UI state:
-
-when to show errors
-
-when to show success
-
-which helper classes to apply
-
-No side effects. No magic.
-
-API
-uxField(config)
-
-Defines a UX contract for a single field.
-
-uxField({
-  name: string
-  required?: boolean
-  validateOn?: "change" | "blur" | "submit"
-  reserveErrorSpace?: boolean
-  errorTone?: "polite" | "assertive"
-  successFeedback?: "none" | "subtle"
-})
-
-
-All options represent UX decisions, not technical constraints.
-
-useFormUX({ config, error, touched, valid })
-
-Resolves a UX contract into render-ready state.
-
-useFormUX({
-  config: UXFieldConfig
-  error?: string
-  touched?: boolean
-  valid?: boolean
-})
-
-
-Returns:
-
+ts
+Copy code
 {
   showError: boolean
   showSuccess: boolean
   errorClassName: string
   helperClassName: string
 }
+UXSpec never renders UI — it only decides behavior.
 
+React Hook Form example
+UXSpec ships an explicit adapter for React Hook Form.
 
-You decide how to render.
-The library decides when.
+ts
+Copy code
+import { useForm } from "react-hook-form"
+import { uxField } from "@smatt92/uxspec-form"
+import { useReactHookFormUX } from "@smatt92/uxspec-form/adapters/react-hook-form"
+tsx
+Copy code
+const form = useForm()
 
-Design principles
+const emailUX = uxField({
+  name: "email",
+  validateOn: "blur",
+  successFeedback: "subtle",
+  reserveErrorSpace: true
+})
 
-Explicit over implicit
-UX rules should be visible in code.
+const ux = useReactHookFormUX({
+  form,
+  field: emailUX,
+  formPhase: form.formState.isSubmitted ? "submitted" : "interacted"
+})
+Usage in JSX:
 
-Predictable over clever
-Same inputs always produce the same UI state.
+tsx
+Copy code
+<input {...form.register("email", { required: true })} />
 
-Composable over opinionated UI
-Works with any design system or form library.
-
-Small surface area
-Easy to learn, easy to maintain.
-
-Status
-
-Version: 0.1.0
-
-Scope: intentionally minimal
-
-Stability: API may evolve, core idea is stable
-
-This is a foundational library, not a finished framework.
-
-Roadmap ideas (not promises)
-
-Form-level UX contracts
-
-Presets for common patterns (login, checkout)
-
-Dev-only warnings for UX anti-patterns
-
-License
-
-MIT
+<div className={ux.helperClassName}>
+  {ux.showError && "Email is required"}
+  {ux.showSuccess && "Looks good"}
+</div>
+You control what is rendered.
+UXSpec controls when.

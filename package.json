@@ -1,25 +1,16 @@
 {
   "name": "@smatt92/uxspec-form",
-  "version": "0.1.0",
-  "description": "UX contracts for forms. Validate experience, not just data.",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist"],
   "sideEffects": false,
   "license": "MIT",
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
-  },
   "peerDependencies": {
-    "react": ">=17"
+    "react": ">=18",
+    "react-hook-form": ">=7"
   },
-  "devDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "react-hook-form": "^7.71.1",
-    "typescript": "^5.9.3"
+  "scripts": {
+    "build": "tsc"
   }
 }
