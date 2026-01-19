@@ -136,26 +136,3 @@ Deterministic UX behavior
 
 ## License
 MIT
-
-```bash
-
-This version:
-- Scans well on npm
-- Gets to code fast
-- Clearly positions the library
-- Avoids “framework README syndrome”
-
----
-
-## 3️⃣ How to update npm README (NO republish needed)
-
-Important:  
-👉 **npm README updates do NOT require a new version**
-
-### Do this:
-
-```bash
-git add README.md
-git commit -m "docs: improve npm README readability"
-git push
-```
