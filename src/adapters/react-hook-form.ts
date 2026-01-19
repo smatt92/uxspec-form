@@ -1,9 +1,9 @@
-import { FieldError, UseFormStateReturn } from "react-hook-form"
+import { FieldError } from "react-hook-form"
+import { UXFieldConfig, FormPhase } from "../types"
 import { uxField } from "../uxField"
 import { useUXField } from "../useUXField"
-import { UXFieldConfig, FormPhase } from "../types"
 
-interface RHFAdapterParams {
+interface ReactHookFormUXParams {
   config: UXFieldConfig
   error?: FieldError
   touched?: boolean
@@ -17,15 +17,17 @@ export function useReactHookFormUX({
   touched = false,
   isValid = false,
   isSubmitted = false
-}: RHFAdapterParams) {
+}: ReactHookFormUXParams) {
+  const normalizedConfig = uxField(config)
 
-  const normalized = uxField(config)
-
-  const formPhase: FormPhase =
-    isSubmitted ? "submitted" : touched ? "interacted" : "idle"
+  const formPhase: FormPhase = isSubmitted
+    ? "submitted"
+    : touched
+      ? "interacted"
+      : "idle"
 
   return useUXField({
-    config: normalized,
+    config: normalizedConfig,
     hasError: Boolean(error),
     touched,
     valid: isValid,
