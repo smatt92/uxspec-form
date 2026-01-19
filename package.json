@@ -1,6 +1,6 @@
 {
   "name": "@smatt92/uxspec-form",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "UX contracts for predictable form feedback",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -128,7 +128,7 @@ UXSpec decides when.
 
 ## Version
 
-v0.2.0
+v0.2.3
 
 Stable UX core
 React Hook Form adapter
