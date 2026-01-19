@@ -4,14 +4,16 @@
     "module": "ESNext",
     "declaration": true,
     "outDir": "dist",
-    "rootDir": "src",
     "strict": true,
     "moduleResolution": "Node",
-    "jsx": "react-jsx",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["examples", "dist", "node_modules"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }

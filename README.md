@@ -1,3 +1,5 @@
+[![npm version](https://img.shields.io/npm/v/@smatt92/uxspec-form.svg)](https://www.npmjs.com/package/@smatt92/uxspec-form)
+
 uxspec-form
 
 Predictable form feedback — by design.
