@@ -1,89 +1,71 @@
 [![npm version](https://img.shields.io/npm/v/@smatt92/uxspec-form.svg)](https://www.npmjs.com/package/@smatt92/uxspec-form)
 
-uxspec-form
+# uxspec-form
 
-Predictable form feedback — by design.
-Stop guessing when errors should appear. Make it explicit.
+**UX contracts for predictable form feedback**
 
-uxspec-form is a UX-first abstraction for form feedback.
-It does not validate data.
-It decides when and how feedback appears.
+> Forms don’t fail validation.  
+> They fail UX.
 
-Why this exists
+`uxspec-form` lets you **control when feedback appears and how it feels** — without changing validation rules or form libraries.
+
+---
+
+## Why this exists
 
 Most form libraries answer:
 
-❓ “Is this field valid?”
+> “Is this field valid?”
 
-But users experience a different problem:
+Users experience a different problem:
 
-❓ “Why is this error showing now?”
+> “Why is this error showing *right now*?”
 
-uxspec-form separates validation logic from UX behavior so that:
+`uxspec-form` separates **validation** from **UX behavior**.
 
-Errors don’t appear too early
+---
 
-Success feedback isn’t noisy
+## What this library does
 
-Layout doesn’t jump unexpectedly
+✔ Decide **when** errors appear (`change | blur | submit`)  
+✔ Decide **how** errors feel (`polite | assertive`)  
+✔ Control **success feedback**  
+✔ Prevent **layout shift**  
+✔ Work with existing form libraries  
 
-UX rules are explicit, reusable, and testable
+❌ Does NOT validate data  
+❌ Does NOT render UI  
+❌ Does NOT replace your form library  
 
-What this library does (and does not do)
-✅ It does
+---
 
-Decide when errors appear (change, blur, submit)
+## The mental model
 
-Decide how errors feel (polite, assertive)
-
-Control success feedback
-
-Prevent layout shift
-
-Work with existing form libraries via adapters
-
-❌ It does not
-
-Validate values
-
-Manage form state
-
-Render UI
-
-Replace your form library
-
-Mental model (important)
-
-Forms report facts.
-Fields decide behavior.
+> **Forms report facts.  
+> Fields decide behavior.**
 
 The form tells a field:
-
-Is there an error?
-
-Has the user interacted?
-
-Is the value valid?
-
-Has the form been submitted?
+- is there an error?
+- has the user interacted?
+- is the value valid?
+- was the form submitted?
 
 The field decides:
+- should feedback appear now?
+- what UX state applies?
 
-Should an error be visible now?
+---
 
-Should success feedback appear?
+## Installation
 
-What CSS state applies?
+```bash
+npm install @smatt92/uxspec-form
+```
 
-Installation
-npm install uxspec-form
+## Core idea (framework-agnostic)
 
-Core concepts
-UX Field Config
-
-A UX contract, not a validator.
-
-import { uxField } from "uxspec-form"
+```bash
+import { uxField } from "@smatt92/uxspec-form"
 
 const emailUX = uxField({
   name: "email",
@@ -92,127 +74,88 @@ const emailUX = uxField({
   successFeedback: "subtle",
   reserveErrorSpace: true
 })
+```
+This is a UX contract, not a validator.
 
-Available options
-validateOn: "change" | "blur" | "submit"
-errorTone: "polite" | "assertive"
-successFeedback: "none" | "subtle"
-reserveErrorSpace: boolean
+## React Hook Form example
 
-Using with React Hook Form (adapter)
-
-uxspec-form ships with a React Hook Form adapter.
-
-Example
+```bash
 import { useForm } from "react-hook-form"
-import { useReactHookFormUX } from "uxspec-form"
+import { useReactHookFormUX } from "@smatt92/uxspec-form"
 
-export function ExampleForm() {
-  const {
-    register,
-    formState: { errors, touchedFields, isSubmitted }
-  } = useForm()
+const form = useForm()
 
-  const emailUX = useReactHookFormUX({
-    config: {
-      name: "email",
-      validateOn: "blur",
-      errorTone: "polite",
-      successFeedback: "subtle",
-      reserveErrorSpace: true
-    },
-    error: errors.email,
-    touched: touchedFields.email,
-    isValid: !errors.email,
-    isSubmitted
-  })
+const ux = useReactHookFormUX({
+  config: {
+    name: "email",
+    validateOn: "blur",
+    successFeedback: "subtle",
+    reserveErrorSpace: true
+  },
+  error: form.formState.errors.email,
+  touched: form.formState.touchedFields.email,
+  isValid: !form.formState.errors.email,
+  isSubmitted: form.formState.isSubmitted
+})
+<input {...form.register("email", { required: true })} />
 
-  return (
-    <div>
-      <input {...register("email", { required: true })} />
+<div className={ux.helperClassName}>
+  {ux.showError && "Email is required"}
+  {ux.showSuccess && "Looks good"}
+</div>
+```
+## What you get back
 
-      <div className={emailUX.helperClassName}>
-        {emailUX.showError && "Email is required"}
-        {emailUX.showSuccess && "Looks good"}
-      </div>
-    </div>
-  )
-}
-
-What the adapter gives you
+```bash
 {
-  showError: boolean
-  showSuccess: boolean
-  errorClassName: string
-  helperClassName: string
+    showError: boolean
+    showSuccess: boolean
+    errorClassName: string
+    helperClassName: string
 }
+```
+You decide what to render.
+UXSpec decides when.
 
+## Why this is different
 
-You decide:
+| Typical forms             | uxspec-form                 |
+| ------------------------- | --------------------------- |
+| Errors appear immediately | Errors appear intentionally |
+| UX rules are implicit     | UX rules are explicit       |
+| Validation drives UX      | UX drives feedback          |
+| Hard to reuse             | Portable UX contracts       |
 
-what text to show
+## Version
 
-what UI to render
-
-what styles to apply
-
-Styling (example)
-.ux-helper-reserved {
-  min-height: 20px;
-}
-
-.ux-helper-error {
-  color: #d32f2f;
-}
-
-.ux-helper-success {
-  color: #2e7d32;
-}
-
-.ux-error-assertive {
-  font-weight: bold;
-}
-
-Why this is different
-Typical forms	uxspec-form
-Errors appear immediately	Errors appear intentionally
-UX rules are implicit	UX rules are explicit
-Validation drives UX	UX drives feedback
-Hard to reuse	Portable UX contracts
-Versioning
 v0.2.0
 
-Introduced adapters
+Stable UX core
+React Hook Form adapter
+Deterministic UX behavior
 
-Explicit form phase model
+## License
+MIT
 
-Stable UX decision engine
+```bash
 
-React Hook Form adapter included
+This version:
+- Scans well on npm
+- Gets to code fast
+- Clearly positions the library
+- Avoids “framework README syndrome”
 
-Who this is for
+---
 
-Designers who care about form behavior
+## 3️⃣ How to update npm README (NO republish needed)
 
-Frontend engineers tired of “why is this showing?”
+Important:  
+👉 **npm README updates do NOT require a new version**
 
-Teams that want consistent UX rules
+### Do this:
 
-Products with complex or sensitive forms
-
-What’s next
-
-CodeSandbox demo
-
-Visual examples in README
-
-v0.2.1 ergonomics pass
-
-More adapters (Formik, TanStack Form)
-
-Philosophy (final note)
-
-Validation answers “is it wrong?”
-UX answers “should we say something?”
-
-uxspec-form exists for the second question.
+```bash
+git add README.md
+git commit -m "docs: improve npm README readability"
+git push
+```
